@@ -1,9 +1,30 @@
 import React,{useState} from 'react'
-import {StyleSheet, Text, TextInput, View, TouchableWithoutFeedback,Animated} from 'react-native'
+import {Alert,StyleSheet, Text, TextInput, View, TouchableWithoutFeedback,Animated} from 'react-native'
 import {Picker} from '@react-native-community/picker'
-const Formulario = () => {
+
+const Formulario = ({busqueda,setBusqueda,setConsultar}) => {
+
+    
+
+
+       //Funcion para consultar clima 
+
+       const consultarClima = () =>{
+        console.log(busqueda)
+        if(busqueda.pais === '' || busqueda.ciudad   === ''){
+            Alert.alert(
+                'Error',
+                'Todos los campos son obligatorios',
+                [{text:"Entendido"}]
+            )
+            return;
+        }else{
+            setConsultar(true)
+        }
+    }
 
     const[animacionBoton,] = useState(new Animated.Value(1))//1 viene hacer el valor de incio
+
 
     const animacionEntrada = () => {
         Animated.spring(animacionBoton, { 
@@ -28,13 +49,17 @@ const Formulario = () => {
             <View styles={styles.formulario}>
                 <View> 
                     <TextInput 
+                    onChangeText={ciudad => setBusqueda({pais:busqueda.pais,ciudad:ciudad})} 
+                    value={busqueda.ciudad}
                     style={styles.input}
                     placeholder="Ingrese una ciudad"
                     placeholderTextColor='#666'
                     />
                 </View>
                 <View> 
-                    <Picker style={styles.picker}>
+                    <Picker style={styles.picker}
+                    selectedValue={busqueda.pais}
+                    onValueChange={pais => setBusqueda({ciudad:busqueda.ciudad,pais:pais})}>
                         <Picker.Item label="Seleccione un  pais" value=""/>
                         <Picker.Item label="Estados Unidos " value="US"/>
                         <Picker.Item label="Mexico" value="MX"/>
@@ -49,6 +74,7 @@ const Formulario = () => {
                 <TouchableWithoutFeedback
                     onPressIn={ ()=> animacionEntrada() } // Se ejecuta cuando mantenemos presionado el boton 
                     onPressOut={ ()=> animacionSalida() } //Se ejecuta cuando dejamos de presionar el boton 
+                    onPress={ ()=> consultarClima()}
                 >
                 
                     <Animated.View style={[styles.btnBuscar, estiloAnimacion]} >
